@@ -111,7 +111,14 @@ const redirect = async (req, res) => {
 };
 
 const healthz = async (req, res) => {
-  res.json({ ok: true, version: "1.0" });
+  const result = await pool.query("select SUM(total_clicks) as totalClick, COUNT(code) as count from links;");
+
+  res.json({
+    ok: true,
+    version: "1.0",
+    totalClick: result.rows[0].totalclick,
+    totalLinkCreated: result.rows[0].count,
+  });
 };
 
 export { createUrl, listLinks, getStats, deleteLink, redirect, healthz };
