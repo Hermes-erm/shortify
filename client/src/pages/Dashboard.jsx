@@ -49,6 +49,9 @@ export default function Dashboard() {
   };
 
   const handleRedirect = async (code) => {
+    setLinks((prev) =>
+      prev.map((link) => (link.code === code ? { ...link, total_clicks: link.total_clicks + 1 } : link))
+    );
     window.open(`${API}/api/${code}`, "_blank");
   };
 
@@ -77,6 +80,7 @@ export default function Dashboard() {
         return;
       }
 
+      data.total_clicks = 0;
       setLinks((prev) => [data, ...prev]);
 
       setInputUrl("");
