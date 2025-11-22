@@ -133,108 +133,119 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h2>Dashboard</h2>
+      {/* <h3>Dashboard</h3> */}
+      <h4 className="mb-2">Dashboard</h4>
 
-      <table className="table table-striped mt-4">
-        <thead>
-          <tr>
-            <th>URL Code</th>
-            <th>URL</th>
-            <th>Total Clicks</th>
-            <th>Last Clicked</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+      <div className="card shadow-sm rounded-4 my-3">
+        <div className="card-body">
+          {/* <h4 className="card-title mb-3">Content of links</h4> */}
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>URL Code</th>
+                  <th>URL</th>
+                  <th>Total Clicks</th>
+                  <th>Last Clicked</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-        <tbody>
-          {currentItems.map((link) => (
-            <tr key={link.code}>
-              <td style={{ cursor: "pointer", color: "#0d6efd" }} onClick={() => handleRedirect(link.code)}>
-                {link.code}
-              </td>
+              <tbody>
+                {currentItems.map((link) => (
+                  <tr key={link.code}>
+                    <td style={{ cursor: "pointer", color: "#0d6efd" }} onClick={() => handleRedirect(link.code)}>
+                      {link.code}
+                    </td>
 
-              <td
-                title={link.url}
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {link.url}
-              </td>
+                    <td
+                      title={link.url}
+                      style={{
+                        maxWidth: "260px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {link.url}
+                    </td>
 
-              <td>{link.total_clicks}</td>
-              <td>{formatDateShort(link.last_clicked) || "Never"}</td>
-              <td>
-                <Link to={`/code/${link.code}`} className="btn btn-sm btn-primary me-2">
-                  Stats
-                </Link>
+                    <td>{link.total_clicks}</td>
+                    <td>{formatDateShort(link.last_clicked)}</td>
+                    <td>
+                      <Link to={`/code/${link.code}`} className="btn btn-outline-primary btn-sm me-2">
+                        Stats
+                      </Link>
 
-                <button className="btn btn-sm btn-danger" onClick={() => openDeleteModal(link.code)}>
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                      <button className="btn btn-outline-danger btn-sm" onClick={() => openDeleteModal(link.code)}>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-      {/* Pagination UI */}
-      <nav>
-        <ul className="pagination">
-          {/* Prev button */}
-          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => changePage(currentPage - 1)}>
-              Previous
-            </button>
-          </li>
+      <div className="container-fluid mt-2">
+        <div className="row align-items-start">
+          {/* LEFT: FORM */}
+          <div className="col-md-4 col-sm-12 p-0">
+            <div className="card shadow-sm rounded-4 p-3 mx-0">
+              <h5 className="mb-3">Create New Short Link</h5>
 
-          {/* Page numbers */}
-          {Array.from({ length: totalPages }, (_, index) => (
-            <li key={index + 1} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
-              <button className="page-link" onClick={() => changePage(index + 1)}>
-                {index + 1}
-              </button>
-            </li>
-          ))}
+              <InputGroup className="mb-2">
+                <Form.Control
+                  placeholder="https://example.com"
+                  value={inputUrl}
+                  onChange={(e) => setInputUrl(e.target.value)}
+                />
+              </InputGroup>
 
-          {/* Next button */}
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => changePage(currentPage + 1)}>
-              Next
-            </button>
-          </li>
-        </ul>
-      </nav>
+              <InputGroup className="mb-2">
+                <Form.Control
+                  placeholder="Optional custom code"
+                  value={inputCode}
+                  onChange={(e) => setInputCode(e.target.value)}
+                />
+              </InputGroup>
 
-      <div style={{ maxWidth: "400px" }} className="mx-auto">
-        {/* URL Input */}
-        <InputGroup className="mb-2">
-          <Form.Control
-            placeholder="https://example.com/my-long-url"
-            aria-label="sample-url"
-            value={inputUrl}
-            onChange={(e) => setInputUrl(e.target.value)}
-          />
-        </InputGroup>
+              <div className="d-grid">
+                <Button variant="primary" className="rounded-pill" onClick={createLink}>
+                  Create Link
+                </Button>
+              </div>
+            </div>
+          </div>
 
-        {/* Optional Code Input */}
-        <InputGroup className="mb-3">
-          <Form.Control
-            placeholder="Optional custom code (ex: mylink123)"
-            aria-label="custom-code"
-            value={inputCode}
-            onChange={(e) => setInputCode(e.target.value)}
-          />
-        </InputGroup>
+          {/* RIGHT: Pagination */}
+          <div className="col-md-8 col-sm-12 d-flex justify-content-end">
+            <nav>
+              <ul className="pagination pagination-sm">
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => changePage(currentPage - 1)}>
+                    Previous
+                  </button>
+                </li>
 
-        {/* Button full width */}
-        <div className="d-grid">
-          <Button variant="primary" size="md" onClick={createLink}>
-            Create Link
-          </Button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <li key={index + 1} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
+                    <button className="page-link" onClick={() => changePage(index + 1)}>
+                      {index + 1}
+                    </button>
+                  </li>
+                ))}
+
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => changePage(currentPage + 1)}>
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
 
