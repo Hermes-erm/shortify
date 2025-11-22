@@ -35,7 +35,7 @@ const createUrl = async (req, res, next) => {
       if (exists.rowCount > 0) return res.status(409).json({ error: "Code already exists" });
     } else code = await generateUniqueCode();
 
-    await pool.query("INSERT INTO links (code, url, total_clicks) VALUES ($1, $2, $3)", [code, url, 1]);
+    await pool.query("INSERT INTO links (code, url, total_clicks) VALUES ($1, $2, $3)", [code, url, 0]);
 
     res.status(201).json({ url, code });
   } catch (error) {
@@ -97,13 +97,14 @@ const redirect = async (req, res) => {
 
     await pool.query("UPDATE links SET total_clicks = total_clicks + 1, last_clicked = NOW() WHERE code = $1", [code]);
 
-    let url = "";
+    let url = link.url;
 
     // used regex to achieve normalize url cz, url might be non (scheme-relative) url
-    if (!/^https?:\/\//i.test(url)) url = "https://" + link.url;
-    else url = link.url;
+    if (!/^https?:\/\//i.test(url)) {
+      url = "https://" + url;
+    }
 
-    res.redirect(302, url);
+    return res.redirect(302, url);
   } catch (error) {
     next(error);
   }
