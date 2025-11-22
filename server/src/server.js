@@ -11,6 +11,11 @@ app.use(express.json());
 
 app.use("/api", apiRouter);
 
+app.use((error, req, res, next) => {
+  console.log("caught err: ", error);
+  res.status(500).json({ message: "Internal server error", error: error.message });
+});
+
 app.listen(process.env.PORT, (error) => {
   error
     ? console.log("Error while running server : ", error)
