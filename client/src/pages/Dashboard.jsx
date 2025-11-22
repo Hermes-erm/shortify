@@ -138,7 +138,7 @@ export default function Dashboard() {
       <table className="table table-striped mt-4">
         <thead>
           <tr>
-            <th>Short Code</th>
+            <th>URL Code</th>
             <th>URL</th>
             <th>Total Clicks</th>
             <th>Last Clicked</th>
