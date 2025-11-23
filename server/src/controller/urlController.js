@@ -31,8 +31,13 @@ const createUrl = async (req, res, next) => {
     if (!isUrl(url)) return res.status(400).json({ message: "Invalid URL" });
 
     if (code) {
+      // used regex to validate the code which should follow the constraint
+      const isValid = /^[A-Za-z0-9-_]{6,8}$/.test(code);
+      if (!isValid) return res.status(400).json({ message: "Code must be 6–8 characters, letters & numbers only" });
+
       const exists = await pool.query("SELECT 1 FROM links WHERE code = $1", [code]);
-      if (exists.rowCount > 0) return res.status(409).json({ error: "Code already exists" });
+
+      if (exists.rowCount > 0) return res.status(409).json({ message: "Code already exists" });
     } else code = await generateUniqueCode();
 
     await pool.query("INSERT INTO links (code, url, total_clicks) VALUES ($1, $2, $3)", [code, url, 0]);

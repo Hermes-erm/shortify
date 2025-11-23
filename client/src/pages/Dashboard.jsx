@@ -5,10 +5,13 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useToast } from "../context/toastContext";
 import Modal from "react-bootstrap/Modal";
+import Loader from "../components/Loader";
 
 const API = import.meta.env.VITE_API_URL;
 
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteCode, setDeleteCode] = useState(null);
 
@@ -33,10 +36,25 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetch(`${API}/api/links`)
-      .then((res) => res.json())
-      .then((data) => setLinks(data));
+    async function loadData() {
+      try {
+        const res = await fetch(`${API}/api/links`);
+
+        if (!res.ok) throw new Error("Server error");
+
+        const data = await res.json();
+        setLinks(data);
+      } catch {
+        showToast("Failed to load links", "error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
   }, []);
+
+  if (loading) return <Loader />;
 
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
