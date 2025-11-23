@@ -10,10 +10,20 @@ import Loader from "../components/Loader";
 const API = import.meta.env.VITE_API_URL;
 
 export default function Dashboard() {
+  const itemsPerPage = 5;
+
+  const [inputUrl, setInputUrl] = useState("");
+  const [inputCode, setInputCode] = useState("");
+
+  const [links, setLinks] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [loading, setLoading] = useState(true);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteCode, setDeleteCode] = useState(null);
+
+  const { showToast } = useToast();
 
   const openDeleteModal = (code) => {
     setDeleteCode(code);
@@ -24,16 +34,6 @@ export default function Dashboard() {
     setShowDeleteModal(false);
     setDeleteCode(null);
   };
-
-  const itemsPerPage = 5;
-
-  const [inputUrl, setInputUrl] = useState("");
-  const [inputCode, setInputCode] = useState("");
-
-  const { showToast } = useToast();
-
-  const [links, setLinks] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function loadData() {
@@ -124,6 +124,8 @@ export default function Dashboard() {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
 
+  const truncate = (str, max = 50) => (str.length > max ? str.slice(0, max) + "..." : str);
+
   const deleteLink = async () => {
     try {
       const res = await fetch(`${API}/api/links/${deleteCode}`, {
@@ -185,7 +187,7 @@ export default function Dashboard() {
                         textOverflow: "ellipsis",
                       }}
                     >
-                      {link.url}
+                      {truncate(link.url, 40)}
                     </td>
 
                     <td>{link.total_clicks}</td>
