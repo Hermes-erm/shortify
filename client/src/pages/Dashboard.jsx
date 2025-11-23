@@ -139,7 +139,6 @@ export default function Dashboard() {
         return;
       }
 
-      // Remove from table
       setLinks((prev) => prev.filter((l) => l.code !== deleteCode));
 
       showToast("Link deleted successfully!", "success");

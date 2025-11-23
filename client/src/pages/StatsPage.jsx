@@ -10,7 +10,7 @@ export default function StatsPage() {
   useEffect(() => {
     fetch(`${API}/api/links/${code}`)
       .then((res) => res.json())
-      .then((d) => setData(d));
+      .then((data) => setData(data));
   }, [code]);
 
   function formatDateShort(dateString) {
